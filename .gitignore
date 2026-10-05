@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+.env*.local
+.DS_Store
+*.pem
+npm-debug.log*
+.vercel
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# Herramientas locales, no forman parte de la web
+.claude/
