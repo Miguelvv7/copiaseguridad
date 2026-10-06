@@ -7,7 +7,7 @@ import CustomCursor from "@/components/CustomCursor";
 import {
   createSmoother,
   refreshOnLoad,
-  ScrollTrigger,
+  refrescar,
   ScrollSmoother,
 } from "@/lib/motion";
 
@@ -48,10 +48,10 @@ export default function SmoothProvider({ children }: { children: ReactNode }) {
     if (smoother) smoother.scrollTo(0, false);
     else window.scrollTo(0, 0);
 
-    ScrollTrigger.refresh();
+    refrescar();
 
     /* Segunda pasada cuando ya han entrado imágenes y fuentes */
-    const id = window.setTimeout(() => ScrollTrigger.refresh(), 350);
+    const id = window.setTimeout(refrescar, 350);
     return () => window.clearTimeout(id);
   }, [pathname]);
 

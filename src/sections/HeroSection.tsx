@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { useGSAP } from "@gsap/react";
-import { gsap, splitChars, scramble, MQ } from "@/lib/motion";
+import { gsap, splitChars, scramble, MQ, pauseWhenHidden } from "@/lib/motion";
 import { metrics, stack } from "@/data/projects";
 
 interface HeroSectionProps {
@@ -102,16 +102,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({ triggerAnimation }) => {
             "-=0.8"
           );
 
-        /* Marquesina inferior de stack */
-        gsap.to(".hero-ticker-track", {
+        /* Marquesina inferior de stack (se pausa cuando el hero sale de
+           pantalla: no tiene sentido animar lo que no se ve) */
+        const ticker = gsap.to(".hero-ticker-track", {
           xPercent: -50,
           duration: 26,
           ease: "none",
           repeat: -1,
         });
+        const dejarDeVigilar = pauseWhenHidden(ref.current, [ticker]);
 
         return () => {
           split?.revert();
+          ticker.kill();
+          dejarDeVigilar();
         };
       });
 
@@ -132,6 +136,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ triggerAnimation }) => {
             yPercent: isDesktop ? 18 : 10,
             opacity: 0.35,
             ease: "power1.inOut",
+            force3D: true,
             scrollTrigger: {
               trigger: ref.current,
               start: "1% top",
@@ -144,6 +149,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ triggerAnimation }) => {
             yPercent: isDesktop ? 25 : 14,
             xPercent: isDesktop ? -6 : -12,
             ease: "none",
+            force3D: true,
             scrollTrigger: {
               trigger: ref.current,
               start: "top top",
@@ -155,6 +161,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ triggerAnimation }) => {
           gsap.to(".hero-grid-bg", {
             yPercent: 12,
             ease: "none",
+            force3D: true,
             scrollTrigger: {
               trigger: ref.current,
               start: "top top",

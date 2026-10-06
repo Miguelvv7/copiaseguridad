@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import { gsap, MQ, ScrollTrigger, skewOnVelocity } from "@/lib/motion";
+import { gsap, MQ, ScrollTrigger, skewOnVelocity, pauseWhenHidden } from "@/lib/motion";
 import { stack } from "@/data/projects";
 
 /**
@@ -30,28 +30,44 @@ const StackMarquee = () => {
           { xPercent: 0, duration: 30, ease: "none", repeat: -1 }
         );
 
-        /* El scroll acelera la marquesina y la inclina ligeramente */
+        /* El scroll acelera la marquesina y la inclina ligeramente.
+           Antes se creaba un tween nuevo en cada actualización de scroll
+           (60 por segundo): en el iPhone eso acaba en pausas del recolector
+           de basura, que se notan como tirones sueltos. Ahora un solo
+           quickTo reutilizable, y vuelta a velocidad normal al parar. */
         const skew = skewOnVelocity(".mq-row", 6);
+
+        const velocidad = { escala: 1 };
+        const aplicar = () => {
+          loopA.timeScale(velocidad.escala);
+          loopB.timeScale(velocidad.escala);
+        };
+        const irA = gsap.quickTo(velocidad, "escala", {
+          duration: 0.4,
+          ease: "power2.out",
+          onUpdate: aplicar,
+        });
 
         const speedTrigger = ScrollTrigger.create({
           onUpdate: (self) => {
-            const boost = Math.min(Math.abs(self.getVelocity()) / 900, 4);
-            gsap.to([loopA, loopB], {
-              timeScale: 1 + boost,
-              duration: 0.3,
-              overwrite: true,
-              onComplete: () => {
-                gsap.to([loopA, loopB], { timeScale: 1, duration: 1.4, ease: "power2.out" });
-              },
-            });
+            irA(1 + Math.min(Math.abs(self.getVelocity()) / 900, 4));
           },
         });
+        const alParar = () => {
+          irA(1);
+        };
+        ScrollTrigger.addEventListener("scrollEnd", alParar);
+
+        /* Fuera de pantalla no se anima: menos trabajo por fotograma */
+        const dejarDeVigilar = pauseWhenHidden(ref.current, [loopA, loopB]);
 
         return () => {
           loopA.kill();
           loopB.kill();
           skew.kill();
           speedTrigger.kill();
+          dejarDeVigilar();
+          ScrollTrigger.removeEventListener("scrollEnd", alParar);
         };
       });
 

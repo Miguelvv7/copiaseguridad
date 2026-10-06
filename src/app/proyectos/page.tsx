@@ -1,21 +1,38 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import FooterSection from "@/sections/FooterSection";
-import { gsap, MQ, splitChars, scramble, revealOnView } from "@/lib/motion";
-import { projects, statusLabel } from "@/data/projects";
+import { gsap, MQ, splitChars, scramble, revealOnView, ScrollSmoother } from "@/lib/motion";
+import { projects, personalProjects, statusLabel } from "@/data/projects";
 
 export default function ProyectosPage() {
   const ref = useRef<HTMLDivElement>(null);
+
+  /* Enlaces a /proyectos#retos: con ScrollSmoother el salto nativo al ancla
+     no funciona, así que se hace a mano cuando ya se ha subido arriba del todo
+     y están medidas las secciones. */
+  useEffect(() => {
+    if (window.location.hash !== "#retos") return;
+    const id = window.setTimeout(() => {
+      const destino = document.getElementById("retos");
+      if (!destino) return;
+      const smoother = ScrollSmoother.get();
+      if (smoother) smoother.scrollTo(destino, true, "top 70px");
+      else destino.scrollIntoView({ behavior: "smooth" });
+    }, 700);
+    return () => window.clearTimeout(id);
+  }, []);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
 
-      mm.add(MQ.motion, () => {
+      mm.add({ motion: MQ.motion, isDesktop: MQ.desktop }, (context) => {
+        const { motion, isDesktop } = context.conditions as Record<string, boolean>;
+        if (!motion) return;
         const split = splitChars(".archive-title");
         if (split) {
           gsap.from(split.chars, {
@@ -48,7 +65,7 @@ export default function ProyectosPage() {
 
         /* Tarjetas: entrada por columnas con máscara */
         const limpiezas: Array<() => void> = [];
-        gsap.utils.toArray<HTMLElement>(".archive-card").forEach((card, i) => {
+        gsap.utils.toArray<HTMLElement>(".archive-card, .reto-card").forEach((card, i) => {
           limpiezas.push(
             revealOnView(
               card,
@@ -59,8 +76,9 @@ export default function ProyectosPage() {
             )
           );
 
-          const img = card.querySelector(".archive-card-img");
-          if (img) {
+          /* En el móvil la foto se queda quieta y entera */
+          const img = card.querySelector(".archive-card-img, .reto-card-img");
+          if (img && isDesktop) {
             gsap.fromTo(
               img,
               { yPercent: -8, scale: 1.16 },
@@ -78,6 +96,17 @@ export default function ProyectosPage() {
             );
           }
         });
+
+        const raiz = ref.current;
+        limpiezas.push(
+          revealOnView(
+            raiz?.querySelector(".retos-head"),
+            raiz?.querySelectorAll(".retos-head > *"),
+            { opacity: 0, y: 24 },
+            { duration: 0.7 },
+            { stagger: 0.08 }
+          )
+        );
 
         gsap.to(".archive-hero", {
           yPercent: 16,
@@ -107,7 +136,8 @@ export default function ProyectosPage() {
         <section className="archive-hero">
           <div className="hero-grid-bg" />
           <p className="archive-eyebrow" style={{ clipPath: "inset(0 100% 0 0)" }}>
-            Archivo · {projects.length} proyectos
+            Archivo · {projects.length} proyectos · {personalProjects.length}{" "}
+            {personalProjects.length === 1 ? "reto" : "retos"}
           </p>
           <div style={{ overflow: "hidden" }}>
             <h1 className="archive-title">Trabajo</h1>
@@ -160,6 +190,57 @@ export default function ProyectosPage() {
             </Link>
           ))}
         </section>
+
+        {personalProjects.length > 0 && (
+          <section id="retos" className="retos">
+            <header className="retos-head">
+              <p className="retos-eyebrow">Fuera de clientes</p>
+              <h2 className="retos-title">Retos personales</h2>
+              <p className="retos-intro">
+                Proyectos que me propuse para aprender o para resolver algo concreto. Alguno
+                llegó a usarse; ninguno es un encargo en marcha.
+              </p>
+            </header>
+
+            <div className="retos-list">
+              {personalProjects.map((project) => (
+                <Link
+                  key={project.slug}
+                  href={`/proyectos/${project.slug}`}
+                  className="reto-card"
+                  style={{ ["--accent" as string]: project.accent }}
+                >
+                  <div className="reto-card-media">
+                    <Image
+                      src={project.cover}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 899px) 92vw, 40vw"
+                      className="reto-card-img"
+                    />
+                  </div>
+
+                  <div className="reto-card-body">
+                    <p className="reto-card-meta">
+                      {project.category} · {project.year} · {statusLabel[project.status]}
+                    </p>
+                    <h3 className="reto-card-title">{project.title}</h3>
+                    <p className="reto-card-tagline">{project.tagline}</p>
+                    <p className="reto-card-goal">{project.goal}</p>
+                    <ul className="archive-card-stack">
+                      {project.stack.slice(0, 5).map((s) => (
+                        <li key={s}>{s}</li>
+                      ))}
+                    </ul>
+                    <span className="reto-card-cta">
+                      Ver el reto <span aria-hidden>→</span>
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="archive-cta">
           <div>

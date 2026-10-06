@@ -19,7 +19,7 @@ const proximaNova = localFont({
 
 const SITE = "https://mvictorio.es";
 const DESCRIPTION =
-  "Tengo 21 años y monto webs y tiendas online desde Écija, Sevilla. Cuatro proyectos funcionando, cada uno explicado por dentro.";
+  "Tengo 21 años y monto webs y tiendas online desde Écija, Sevilla. Seis proyectos, cada uno explicado por dentro.";
 
 export const metadata: Metadata = {
   title: {

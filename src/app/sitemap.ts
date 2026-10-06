@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { projects } from "@/data/projects";
+import { allProjects } from "@/data/projects";
 
 const SITE = "https://mvictorio.es";
 
@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === "" ? 1 : 0.8,
   }));
 
-  const projectRoutes = projects.map((project) => ({
+  const projectRoutes = allProjects.map((project) => ({
     url: `${SITE}/proyectos/${project.slug}`,
     lastModified: new Date(),
     changeFrequency: "yearly" as const,

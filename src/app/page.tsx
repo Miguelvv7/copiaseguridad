@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ScrollTrigger } from "@/lib/motion";
+import { refrescar } from "@/lib/motion";
 import Preloader from "@/components/Preloader";
 import StackMarquee from "@/components/StackMarquee";
 import HeroSection from "@/sections/HeroSection";
@@ -37,7 +37,8 @@ export default function Home() {
      el preloader se va, se recalculan todas las medidas. */
   useEffect(() => {
     if (!isPreloaderDone) return;
-    const refrescar = () => ScrollTrigger.refresh();
+    /* refrescar() espera a que pare el scroll si el usuario ya ha empezado
+       a bajar: un recálculo en mitad del gesto era un tirón en el iPhone */
     refrescar();
     const t1 = window.setTimeout(refrescar, 200);
     const t2 = window.setTimeout(refrescar, 800);

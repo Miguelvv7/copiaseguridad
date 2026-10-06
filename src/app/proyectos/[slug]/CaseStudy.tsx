@@ -11,16 +11,23 @@ import { statusLabel, type Project } from "@/data/projects";
 interface CaseStudyProps {
   project: Project;
   next: Project;
+  /** proyecto propio / reto: cambia la miga de pan */
+  personal?: boolean;
 }
 
-export default function CaseStudy({ project, next }: CaseStudyProps) {
+/* Títulos con tilde o eñe: van en mayúsculas y el acento sobresale por arriba */
+const conTilde = (texto: string) => /[ÁÉÍÓÚÜÑáéíóúüñ]/.test(texto);
+
+export default function CaseStudy({ project, next, personal = false }: CaseStudyProps) {
   const ref = useRef<HTMLElement>(null);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
 
-      mm.add(MQ.motion, () => {
+      mm.add({ motion: MQ.motion, isDesktop: MQ.desktop }, (context) => {
+        const { motion, isDesktop } = context.conditions as Record<string, boolean>;
+        if (!motion) return;
         const limpiezas: Array<() => void> = [];
         const title = splitChars(".cs-title");
         const summary = splitLines(".cs-summary p");
@@ -67,17 +74,7 @@ export default function CaseStudy({ project, next }: CaseStudyProps) {
             "-=0.6"
           );
 
-        /* Parallax de la portada */
-        gsap.to(".cs-cover img", {
-          yPercent: 12,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".cs-cover",
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
+        /* La portada no lleva parallax: se enseña entera, sin recortes */
 
         const raiz = ref.current;
         const q = (sel: string) => raiz?.querySelector(sel);
@@ -132,7 +129,8 @@ export default function CaseStudy({ project, next }: CaseStudyProps) {
               { clipPath: "inset(0 0 100% 0)" },
               { duration: 1, ease: "expo.out" }, { stagger: 0 })
           );
-          gsap.fromTo(
+          /* El zoom de las capturas, solo en escritorio */
+          if (isDesktop) gsap.fromTo(
             shot.querySelector("img"),
             { scale: 1.2 },
             {
@@ -177,12 +175,14 @@ export default function CaseStudy({ project, next }: CaseStudyProps) {
           <header className="cs-hero">
             <div className="hero-grid-bg" />
             <p className="cs-eyebrow" style={{ clipPath: "inset(0 100% 0 0)" }}>
-              <Link href="/proyectos">Proyectos</Link>
+              <Link href={personal ? "/proyectos#retos" : "/proyectos"}>
+                {personal ? "Retos personales" : "Proyectos"}
+              </Link>
               <span aria-hidden> / </span>
               {project.category}
             </p>
 
-            <div style={{ overflow: "hidden" }}>
+            <div className={`cs-title-mask${conTilde(project.title) ? " con-tilde" : ""}`}>
               <h1 className="cs-title">{project.title}</h1>
             </div>
 
@@ -260,7 +260,8 @@ export default function CaseStudy({ project, next }: CaseStudyProps) {
               )}
               {!project.liveUrl && !project.repoUrl && (
                 <p className="cs-private">
-                  Aplicación privada con cuentas de usuario: no hay demo pública.
+                  {project.offlineNote ??
+                    "Aplicación privada con cuentas de usuario: no hay demo pública."}
                 </p>
               )}
               {project.repoUrl && (
@@ -315,7 +316,7 @@ export default function CaseStudy({ project, next }: CaseStudyProps) {
 
           <Link href={`/proyectos/${next.slug}`} className="cs-next">
             <p className="cs-section-label">Siguiente proyecto</p>
-            <div style={{ overflow: "hidden" }}>
+            <div className={`cs-next-title-mask${conTilde(next.title) ? " con-tilde" : ""}`}>
               <h2 className="cs-next-title">{next.title}</h2>
             </div>
             <span className="cs-next-tagline">{next.tagline}</span>

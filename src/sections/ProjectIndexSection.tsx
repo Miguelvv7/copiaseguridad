@@ -6,7 +6,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { gsap, MQ, splitChars, revealOnView } from "@/lib/motion";
-import { projects, statusLabel } from "@/data/projects";
+import { projects, personalProjects, statusLabel } from "@/data/projects";
+
+/* Número de proyectos en letra para el antetítulo («Los cinco») */
+const NUMEROS = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez"];
+const enLetra = (n: number) => NUMEROS[n] ?? String(n);
 
 /**
  * Índice tipo archivo. En escritorio la portada sigue al cursor;
@@ -140,15 +144,6 @@ const ProjectIndexSection = () => {
               { stagger: 0 }
             )
           );
-          gsap.fromTo(
-            thumb.querySelector("img"),
-            { scale: 1.25 },
-            {
-              scale: 1,
-              ease: "none",
-              scrollTrigger: { trigger: thumb, start: "top bottom", end: "bottom top", scrub: true },
-            }
-          );
         });
         return () => limpiezas.forEach((fn) => fn());
       });
@@ -166,7 +161,7 @@ const ProjectIndexSection = () => {
 
       <div className="idx-inner">
         <div className="idx-head">
-          <p className="idx-eyebrow">Los cuatro</p>
+          <p className="idx-eyebrow">Los {enLetra(projects.length)}</p>
           <div style={{ overflow: "hidden" }}>
             <h2 className="idx-title">Todo lo que hay</h2>
           </div>
@@ -217,6 +212,21 @@ const ProjectIndexSection = () => {
           ))}
           <div className="idx-line" />
         </div>
+
+        {personalProjects.length > 0 && (
+          <Link href="/proyectos#retos" className="idx-retos">
+            <span className="idx-retos-label">Y aparte</span>
+            <span>
+              {personalProjects.length === 1
+                ? "Un reto personal"
+                : `${personalProjects.length} retos personales`}
+              : {personalProjects.map((p) => p.title).join(", ")}
+            </span>
+            <span className="idx-retos-arrow" aria-hidden>
+              →
+            </span>
+          </Link>
+        )}
       </div>
 
       {montado &&

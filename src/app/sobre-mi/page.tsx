@@ -10,7 +10,7 @@ import { porqueYo, steps, stack, noHago, sectors } from "@/data/projects";
 
 const BIO = [
   "Me llamo Miguel Victorio, tengo 21 años y vivo en Écija, Sevilla.",
-  "No vengo de una carrera de informática — el curso lo empiezo ahora. Empecé haciendo una web para un amigo, luego otra para alguien que me escribió, y de ahí no he parado. Hoy hay cuatro negocios funcionando con cosas que he montado yo.",
+  "No vengo de una carrera de informática — el curso lo empiezo ahora. Empecé haciendo una web para un amigo, luego otra para alguien que me escribió, y de ahí no he parado. Hoy hay cinco negocios con webs que he montado yo.",
   "La IA es mi herramienta principal y no lo escondo: es lo que me permite abrir proyectos que hace un año ni habría intentado. Lo que sí pongo yo son las horas, las ganas de que quede bien y la cara cuando algo hay que arreglarlo.",
   "Trabajo solo y de principio a fin: hablo contigo, lo monto, lo publicamos y sigo estando después. Y si me pides algo que no sé hacer, te lo digo antes de empezar.",
 ];

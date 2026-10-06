@@ -27,7 +27,11 @@ export interface Project {
   featured?: boolean;
   liveUrl?: string;
   repoUrl?: string;
-  /** portada 4:3 o 16:9 en /public/images */
+  /** aviso en la ficha cuando no hay web que visitar ni código que ver.
+      Si falta, pone que es una aplicación privada sin demo pública */
+  offlineNote?: string;
+  /** portada en /public/images, SIEMPRE 16:9 (1920×1080): se enseña entera,
+      sin recortes, en el móvil y en el ordenador */
   cover: string;
   /** capturas adicionales para la ficha del proyecto */
   gallery?: string[];
@@ -58,14 +62,14 @@ export const projects: Project[] = [
     tagline: "Migración de PrestaShop a Shopify sin pagar por pasar el catálogo a mano",
     category: "Shopify · Ecommerce",
     year: 2026,
-    date: "Mayo 2026",
+    date: "Enero 2026",
     role: "Diseño, desarrollo Liquid, migración de catálogo y SEO",
     client: "LookVintage",
     location: "Écija, Sevilla",
     status: "live",
     featured: true,
     liveUrl: "https://www.lookvintage.es/",
-    cover: "/images/project-lookvintage.webp",
+    cover: "/images/project-lookvintage.jpg",
     gallery: ["/images/screen-lookvintage.jpg"],
     stack: ["Shopify", "Liquid", "GraphQL", "JavaScript", "SEO"],
     goal: "Volver a vender muebles a medida online con una tienda que se pueda gestionar sin sufrir.",
@@ -92,50 +96,126 @@ export const projects: Project[] = [
     accent: "#60a5fa",
   },
   {
-    slug: "facturas",
-    title: "Facturas",
-    tagline: "App de facturación y control de gastos para autónomos",
-    category: "Next.js · App · Supabase",
+    slug: "opticaarenas",
+    title: "Óptica Arenas",
+    tagline: "Web para una óptica y centro auditivo que facilita pedir cita por WhatsApp",
+    category: "Web · Tailwind",
     year: 2026,
-    date: "Agosto 2026",
-    role: "Producto, diseño, desarrollo y modelo fiscal",
-    client: "Un amigo autónomo y un familiar",
+    date: "Septiembre 2026",
+    role: "Diseño, desarrollo, SEO local y AEO",
+    client: "Óptica Arenas Audífonos",
     location: "Écija, Sevilla",
     status: "live",
     featured: true,
-    cover: "/images/project-facturas.jpg",
+    liveUrl: "https://arenas-iota.vercel.app/",
+    cover: "/images/project-optica.jpg",
     gallery: [
-      "/images/screen-facturas-panel.jpg",
-      "/images/screen-facturas-informes.jpg",
+      "/images/screen-optica-lectura.jpg",
+      "/images/screen-optica-cita.jpg",
+      "/images/screen-optica-servicios.jpg",
     ],
-    galleryNote:
-      "El proyecto y los usuarios son reales; los datos de las capturas no. Están hechas con el juego de datos de ejemplo que trae la propia aplicación, así que el negocio, los clientes, los productos y todos los importes son inventados.",
-    stack: ["Next.js", "TypeScript", "Supabase", "Postgres", "Tailwind", "jsPDF", "Vitest"],
+    stack: ["HTML", "Tailwind", "JavaScript", "Web Audio", "SEO local", "Vercel"],
     goal:
-      "Que un autónomo pueda facturar bien y saber qué gana sin entender de fiscalidad ni pelearse con un Excel.",
+      "Que cualquiera, tenga la edad que tenga, entienda qué hace la óptica y pida cita por WhatsApp en un minuto.",
     context:
-      "Un amigo acababa de hacerse autónomo y quería quitarse de encima el lío de los trámites. Y un familiar llevaba las facturas de sus clientes en Excel: sabía lo que vendía, pero no lo que le quedaba ni cuánto tenía que apartar para Hacienda, y eso solo se descubría al llegar el trimestre.",
+      "Una óptica con gabinete de audiología propio, más de 20 años en Écija y pacientes de toda la vida, muchos de ellos mayores. Gran parte de las citas se siguen pidiendo en persona o por teléfono. La web tenía que servir a dos públicos a la vez: al que llega desde Google buscando una óptica y al que necesita la letra grande para leer.",
     summary: [
-      "Es una aplicación web privada, con cuentas, para llevar el negocio entero: clientes, productos, gastos, facturas y los informes que dicen qué deja dinero de verdad.",
-      "La idea de fondo es que la complejidad la coma el código. La app calcula el IVA por tipo, el recargo de equivalencia y el adelanto del IRPF, pero en pantalla solo aparece una frase: «aparta 1.661 € antes del 20 de octubre». La palabra «modelo 303» no sale nunca.",
+      "Es una web estática, sin gestor ni base de datos: páginas en HTML y Tailwind que cargan al momento y no hay nada que se pueda caer. Pedir cita tampoco necesita servidor: eliges si es para la vista o para el oído, pones tu nombre y se abre WhatsApp con el mensaje ya escrito. Solo queda darle a enviar.",
+      "Como gran parte del público es gente mayor, la accesibilidad no podía ser un extra. Un botón «AA» en la cabecera deja agrandar la letra, subir el contraste y quitar las animaciones, y la web lo recuerda al cambiar de página. Para quien no sabe por dónde empezar hay un test de visión, un test de audición y un configurador de audífonos que te orientan en un minuto y acaban en una cita.",
     ],
     highlights: [
-      "Calcula el IVA por tipos (4 %, 10 % y 21 %) y el recargo de equivalencia",
-      "Las cuentas se llevan en céntimos enteros: una factura que no cuadra al céntimo es una factura que te pueden rechazar",
-      "Una factura emitida no se puede tocar ni borrar; para corregir hay que hacer una rectificativa, como manda la ley",
-      "Cada factura queda encadenada a la anterior con una huella, cumpliendo Verifactu antes de que sea obligatorio",
-      "Genera el PDF con el logo y el color de la marca de cada usuario",
-      "Avisa de qué producto deja más dinero, de qué clientes llevan tiempo sin comprar y de qué se está acabando",
-      "Cada usuario ve solo sus datos, y la app también funciona en local sin cuenta para probarla"
+      "Cita por WhatsApp en tres pasos: el mensaje sale escrito con el servicio, el nombre, el teléfono y la hora preferida",
+      "Botón «AA» de lectura fácil: tres tamaños de letra, más contraste y sin animaciones, guardado entre páginas",
+      "Test de audición con tonos generados en el navegador, de grave a agudo, y test de visión con carta optométrica",
+      "Configurador de audífonos que hace tres preguntas y manda la recomendación por WhatsApp",
+      "Aviso en directo de si la óptica está abierta o cerrada según el horario",
+      "Fotos reales del gabinete, sin casos clínicos ni diagnósticos: es una óptica, no una consulta médica",
+      "SEO local con datos estructurados de óptica y preguntas frecuentes, y el mapa de Google solo se carga si lo pides",
     ],
     outcome:
-      "El Excel desapareció. Los dos facturan desde el móvil con numeración correlativa correcta, tienen más control sobre lo que entra y sale, y saben en todo momento cuánto del dinero de la cuenta no es suyo.",
+      "La óptica tiene una web propia que explica todo lo que hace, de la vista al oído, y que puede usar cualquiera de sus pacientes, también quien necesita la letra grande. Pedir cita es escribir tu nombre y pulsar un botón.",
     facts: [
-      { value: "2", label: "negocios usándola a diario" },
-      { value: "65", label: "tests del motor fiscal" },
-      { value: "Verifactu", label: "desde el día uno" },
+      { value: "3", label: "herramientas que acaban en cita" },
+      { value: "AA", label: "lectura fácil en todas las páginas" },
+      { value: "0", label: "cookies de publicidad" },
     ],
-    accent: "#7d9142",
+    accent: "#5fd4bc",
+  },
+  {
+    slug: "raicesdelsur",
+    title: "Raíces del Sur",
+    tagline: "Tienda de aceite de oliva virgen extra que vende por packs y arranca en preventa",
+    category: "Shopify · Ecommerce",
+    year: 2026,
+    date: "Octubre 2026",
+    role: "Diseño, tema a medida y desarrollo Liquid",
+    client: "Raíces del Sur",
+    location: "Écija, Sevilla",
+    status: "wip",
+    featured: true,
+    liveUrl: "https://raicesdelsuraove.com/",
+    cover: "/images/project-raices.jpg",
+    gallery: ["/images/screen-raices-inicio.jpg"],
+    stack: ["Shopify", "Liquid", "JavaScript", "CSS"],
+    goal: "Vender un aceite de edición limitada antes de que salga, con una tienda a la altura del producto.",
+    context:
+      "Una persona cercana lanzaba su propia marca de aceite de oliva virgen extra: una edición limitada del primer día de cosecha, en botella de 500 ml y caja de regalo. No había tienda, y la idea era abrir en preventa y vender por packs, no botella a botella.",
+    summary: [
+      "Monté la tienda en Shopify y adapté el tema a la marca: fondo oscuro, detalles dorados y una tipografía clásica, para que un aceite de edición limitada se vea como lo que es y no como uno más del supermercado.",
+      "La clave está en cómo se vende. En la ficha del aceite eliges directamente el pack de 2, 4 o 6 botellas y ves al momento cuánto te sale cada una y cuánto te ahorras. El de seis lleva una de regalo, y ese descuento entra solo al pagar, sin códigos.",
+    ],
+    highlights: [
+      "Tema de Shopify adaptado a la marca: oscuro, con detalles dorados y tipografía clásica",
+      "Selector de packs en la ficha de producto: 2, 4 o 6 botellas, con el precio por botella y lo que te ahorras",
+      "Etiquetas de «Más elegido» y «Mejor oferta» para guiar hacia los packs grandes",
+      "Pack 5+1: la sexta botella se descuenta sola al pagar, sin que el cliente meta ningún código",
+      "Textos de confianza junto al botón de compra: envío en 24–72 h, pago seguro y 30 días de devolución",
+      "Página de eventos de la marca",
+    ],
+    outcome:
+      "La tienda ya está publicada y en preventa: el aceite se puede reservar desde hoy. Sigo añadiéndole cosas antes del lanzamiento.",
+    accent: "#cfae74",
+  },
+  {
+    slug: "peluquerialafamilia",
+    title: "Peluquería La Familia",
+    tagline: "Web de reservas que sustituye a plataformas de pago en una peluquería de Écija",
+    category: "Web app · Reservas",
+    year: 2026,
+    date: "Octubre 2026",
+    role: "Planteamiento, especificación técnica y dirección del proyecto",
+    client: "Peluquería La Familia",
+    location: "Écija, Sevilla",
+    status: "live",
+    featured: true,
+    offlineNote: "Web en uso por los clientes de la peluquería: no se enlaza para no generar reservas de prueba.",
+    cover: "/images/project-familia.jpg",
+    gallery: ["/images/screen-familia-reserva.jpg"],
+    stack: ["Next.js", "Supabase", "Netlify", "Resend", "Claude Code"],
+    goal: "Que los clientes reserven solos desde el móvil y la peluquería se ahorre suscripciones externas.",
+    context:
+      "La peluquería quería su propia web de reservas y llevar un mejor registro de su actividad. Tenía que ir perfecta en el iPhone y en cualquier móvil, y no dar nunca dos citas a la misma hora.",
+    summary: [
+      "Antes de escribir una línea de código lo dejé todo decidido en una especificación de seis páginas. Recoge los datos del negocio, el diseño, cada paso de la reserva, la base de datos, la seguridad y la privacidad. Al final va una lista de errores que no podían pasar, cada uno con su forma de comprobarlo.",
+      "La web se construyó por fases con Claude Code siguiendo esa especificación. El resultado es una reserva en cuatro pasos pensada para el móvil: eliges servicio, día y hora, y la confirmación llega por email.",
+    ],
+    highlights: [
+      "Los datos del negocio y una dirección visual propia, para que no pareciera una plantilla",
+      "La reserva en cuatro pasos pensada para el iPhone, con el paso guardado en la dirección para poder volver atrás sin perder nada",
+      "Citas abiertas con un mes de antelación, abriendo un día nuevo cada día",
+      "Que nunca se puedan dar dos citas a la misma hora, ni aunque dos personas reserven a la vez",
+      "Confirmación por email con Resend y recordatorios por WhatsApp",
+      "Un panel para el peluquero desde el móvil: agenda, bloqueos de días y fichas de clientes",
+      "Seguridad, privacidad y la lista de errores prohibidos con sus pruebas",
+    ],
+    outcome:
+      "La web está publicada y ya se puede reservar desde el móvil. Las confirmaciones salen por email; los avisos por WhatsApp se activarán más adelante.",
+    facts: [
+      { value: "6", label: "páginas de especificación" },
+      { value: "4", label: "pasos para reservar" },
+      { value: "1 mes", label: "de citas abiertas, día a día" },
+    ],
+    accent: "#71c780",
   },
   {
     slug: "manuelinteriorismo",
@@ -143,14 +223,14 @@ export const projects: Project[] = [
     tagline: "Estudio de interiorismo con animaciones GSAP",
     category: "Shopify · Diseño",
     year: 2026,
-    date: "Actualmente",
+    date: "En desarrollo",
     role: "Dirección visual, desarrollo y animación",
     client: "Manuel Interiorismo",
     location: "Écija, Sevilla",
     status: "wip",
     featured: true,
     liveUrl: "https://manuelinteriorismo.com/",
-    cover: "/images/project-manuel.webp",
+    cover: "/images/project-manuel.jpg",
     gallery: ["/images/screen-manuel.jpg"],
     stack: ["Shopify", "Liquid", "GSAP", "ScrollTrigger", "CSS"],
     goal: "Enseñar proyectos de interiorismo como si fueran una revista, y vender después.",
@@ -184,10 +264,10 @@ export const projects: Project[] = [
     role: "Investigación de mercado, diseño y montaje de tienda",
     client: "London Langford",
     location: "Londres · remoto",
-    status: "live",
+    status: "archived",
     featured: true,
-    liveUrl: "https://londonlangford.com/",
-    cover: "/images/langford.png",
+    offlineNote: "La tienda cerró al terminar el dropshipping: ya no se puede visitar.",
+    cover: "/images/project-langford.jpg",
     stack: ["Shopify", "Liquid", "CSS", "JavaScript"],
     goal: "Vender ropa en Londres desde España con una tienda que parezca de allí.",
     context:
@@ -204,19 +284,75 @@ export const projects: Project[] = [
       "Colecciones montadas para que el catálogo pueda crecer sin rehacerlo"
     ],
     outcome:
-      "La tienda facturó 22.000 £ en sus dos primeros meses.",
+      "La tienda facturó 22.000 £ en sus dos primeros meses. El dropshipping duró tres meses y después se cerró, así que hoy la tienda ya no está activa.",
     facts: [
       { value: "22.000 £", label: "facturados en 2 meses" },
-      { value: "2", label: "meses desde el lanzamiento" },
+      { value: "3", label: "meses de dropshipping" },
       { value: "0", label: "tiendas previas: montada de cero" },
     ],
     accent: "#e8712b",
   },
 ];
 
+/* ── Retos personales ──
+   Proyectos propios que no son encargos en marcha. Salen en su propio
+   apartado de /proyectos y tienen ficha, pero no aparecen en la portada. */
+export const personalProjects: Project[] = [
+  {
+    slug: "facturas",
+    title: "Facturas",
+    tagline: "App de facturación y control de gastos para autónomos",
+    category: "Next.js · App · Supabase",
+    year: 2026,
+    date: "Agosto 2026",
+    role: "Producto, diseño, desarrollo y modelo fiscal",
+    location: "Écija, Sevilla",
+    status: "archived",
+    cover: "/images/project-facturas.jpg",
+    gallery: [
+      "/images/screen-facturas-panel.jpg",
+      "/images/screen-facturas-informes.jpg",
+    ],
+    galleryNote:
+      "El proyecto es real y llegó a usarse; los datos de las capturas no. Están hechas con el juego de datos de ejemplo que trae la propia aplicación, así que el negocio, los clientes, los productos y todos los importes son inventados.",
+    stack: ["Next.js", "TypeScript", "Supabase", "Postgres", "Tailwind", "jsPDF", "Vitest"],
+    goal:
+      "Que un autónomo pueda facturar bien y saber qué gana sin entender de fiscalidad ni pelearse con un Excel.",
+    context:
+      "Un amigo acababa de hacerse autónomo y quería quitarse de encima el lío de los trámites. Y un familiar llevaba las facturas de sus clientes en Excel: sabía lo que vendía, pero no lo que le quedaba ni cuánto tenía que apartar para Hacienda, y eso solo se descubría al llegar el trimestre.",
+    summary: [
+      "Es una aplicación web privada, con cuentas, para llevar el negocio entero: clientes, productos, gastos, facturas y los informes que dicen qué deja dinero de verdad.",
+      "La idea de fondo es que la complejidad la coma el código. La app calcula el IVA por tipo, el recargo de equivalencia y el adelanto del IRPF, pero en pantalla solo aparece una frase: «aparta 1.661 € antes del 20 de octubre». La palabra «modelo 303» no sale nunca.",
+    ],
+    highlights: [
+      "Calcula el IVA por tipos (4 %, 10 % y 21 %) y el recargo de equivalencia",
+      "Las cuentas se llevan en céntimos enteros: una factura que no cuadra al céntimo es una factura que te pueden rechazar",
+      "Una factura emitida no se puede tocar ni borrar; para corregir hay que hacer una rectificativa, como manda la ley",
+      "Cada factura queda encadenada a la anterior con una huella, cumpliendo Verifactu antes de que sea obligatorio",
+      "Genera el PDF con el logo y el color de la marca de cada usuario",
+      "Avisa de qué producto deja más dinero, de qué clientes llevan tiempo sin comprar y de qué se está acabando",
+      "Cada usuario ve solo sus datos, y la app también funciona en local sin cuenta para probarla"
+    ],
+    outcome:
+      "Un amigo autónomo y un familiar la usaron para dejar el Excel y facturar desde el móvil. Ahora mismo no la usa nadie, y por eso está aquí y no entre los trabajos para clientes. Me la quedo como el reto con el que más he aprendido: base de datos, cuentas de usuario, tests y una normativa fiscal que no perdona ni un céntimo.",
+    facts: [
+      { value: "65", label: "tests del motor fiscal" },
+      { value: "Verifactu", label: "desde el día uno" },
+      { value: "0,00 €", label: "de descuadre: todo en céntimos" },
+    ],
+    accent: "#7d9142",
+  },
+];
+
+/** Clientes + retos: para rutas, sitemap y la navegación entre fichas */
+export const allProjects: Project[] = [...projects, ...personalProjects];
+
+export const isPersonalProject = (slug: string) =>
+  personalProjects.some((p) => p.slug === slug);
+
 export const featuredProjects = projects.filter((p) => p.featured !== false);
 
-export const getProject = (slug: string) => projects.find((p) => p.slug === slug);
+export const getProject = (slug: string) => allProjects.find((p) => p.slug === slug);
 
 export const statusLabel: Record<ProjectStatus, string> = {
   live: "En producción",
@@ -283,7 +419,7 @@ export const stack = [
 ];
 
 export const metrics = [
-  { value: "4", label: "webs en producción" },
+  { value: "5", label: "webs publicadas" },
   { value: "2026", label: "aprendiendo" },
   { value: "Écija", label: "base · remoto" },
 ];
@@ -369,7 +505,10 @@ export const porqueYo = [
 
 /* ──────────────────────────────────────────────────────────────
    PLANTILLA — copia este bloque dentro de `projects` para publicar
-   un proyecto nuevo. Borra los campos opcionales que no uses.
+   un proyecto nuevo. Si es un proyecto propio o un reto que no es
+   un encargo, pégalo en `personalProjects`: saldrá en el apartado
+   «Retos personales» de /proyectos y no en la portada.
+   Borra los campos opcionales que no uses.
 
    {
      slug: "mi-proyecto",
@@ -385,7 +524,7 @@ export const porqueYo = [
      featured: true,              // aparece en la portada
      liveUrl: "https://...",
      repoUrl: "https://github.com/...",
-     cover: "/images/mi-proyecto.webp",
+     cover: "/images/mi-proyecto.jpg",   // 16:9, 1920×1080
      gallery: ["/images/mi-proyecto-1.jpg"],
      galleryNote: "Aviso opcional bajo las capturas (datos de ejemplo, etc.).",
      stack: ["Shopify", "Liquid"],

@@ -57,15 +57,15 @@ const ShowcaseSection = () => {
             },
           });
 
-          /* Parallax interno: la imagen se mueve dentro de la card */
+          /* Parallax interno: la imagen se mueve dentro de la card.
+             Solo en escritorio: en el móvil la foto se ve entera y quieta. */
           gsap.utils.toArray<HTMLElement>(".sc-card").forEach((card) => {
             const img = card.querySelector(".sc-card-img");
-            if (!img) return;
-            gsap.fromTo(
+            if (img && isDesktop) gsap.fromTo(
               img,
-              { xPercent: isDesktop ? -8 : -5, scale: 1.14 },
+              { xPercent: -8, scale: 1.14 },
               {
-                xPercent: isDesktop ? 8 : 5,
+                xPercent: 8,
                 scale: 1.02,
                 ease: "none",
                 scrollTrigger: {
@@ -181,6 +181,10 @@ const ShowcaseSection = () => {
                   className="sc-card-img"
                   sizes="(max-width: 899px) 84vw, 46vw"
                   priority={i === 0}
+                  /* Todas cargadas de antemano: si una foto se descarga y se
+                     decodifica en mitad del deslizamiento horizontal, el
+                     iPhone pega un tirón justo ahí */
+                  loading={i === 0 ? undefined : "eager"}
                 />
                 <div className="sc-card-overlay" />
                 <span

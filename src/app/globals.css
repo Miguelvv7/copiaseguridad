@@ -33,6 +33,9 @@ html,
 body {
   margin: 0;
   padding: 0;
+  /* Sin rebote elástico en los bordes: con el contenido en un contenedor fijo
+     (ScrollSmoother), el rebote de iOS se veía como un enganchón */
+  overscroll-behavior-y: none;
   background-color: var(--bg);
   color: var(--ink);
   font-family: var(--display);
@@ -56,6 +59,11 @@ a {
 }
 
 /* ── ScrollSmoother: activo también en táctil ───────────────── */
+/* Alturas de pantalla completa: siempre en svh («small viewport height»).
+   En el iPhone, dvh cambia cada vez que Safari esconde o enseña su barra al
+   hacer scroll: las secciones con pin cambiaban de alto en mitad del gesto y
+   ScrollTrigger —que en táctil ignora esos cambios a propósito— se quedaba
+   con medidas viejas. Eso daba saltos y tirones. svh no se mueve nunca. */
 #smooth-wrapper {
   overflow: hidden;
   position: fixed;
@@ -71,7 +79,8 @@ a {
 }
 
 .page-hidden {
-  height: 100dvh;
+  height: 100vh;
+  height: 100svh;
   overflow: hidden;
   opacity: 0;
 }
@@ -408,7 +417,8 @@ a {
 .hero-outer {
   position: relative;
   width: 100%;
-  min-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   background: var(--bg);
@@ -418,7 +428,8 @@ a {
   position: relative;
   z-index: 3;
   width: 100%;
-  min-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
 }
@@ -671,7 +682,8 @@ a {
 .manifesto-section {
   background: var(--light);
   color: #0c1829;
-  min-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -735,7 +747,8 @@ a {
 /* ── Showcase horizontal ────────────────────────────────────── */
 .showcase-section {
   position: relative;
-  height: 100dvh;
+  height: 100vh;
+  height: 100svh;
   background: var(--bg);
   overflow: hidden;
   display: flex;
@@ -826,12 +839,17 @@ a {
 
 .sc-card {
   flex: none;
-  width: clamp(280px, 84vw, 46vw);
+  /* La foto va en 16:9 y entera; el ancho se limita también por la altura de
+     la pantalla para que la tarjeta quepa en portátiles bajitos. */
+  width: max(280px, min(46vw, 74vh, 46rem));
+}
+@media (max-width: 899px) {
+  .sc-card { width: 84vw; }
 }
 .sc-card-link { display: block; }
 .sc-card-media {
   position: relative;
-  height: clamp(15rem, 42vh, 26rem);
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 1px solid rgba(96, 165, 250, 0.22);
 }
@@ -965,7 +983,8 @@ a {
 .capabilities-section {
   position: relative;
   width: 100%;
-  height: 100dvh;
+  height: 100vh;
+  height: 100svh;
   background: var(--bg);
   overflow: hidden;
 }
@@ -1148,6 +1167,26 @@ a {
   height: 1px;
   background: rgba(96, 165, 250, 0.16);
 }
+.idx-retos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1rem;
+  margin-top: clamp(1.6rem, 3vw, 2.4rem);
+  font-family: var(--body);
+  color: var(--ink-dim);
+  font-size: clamp(0.8rem, 1vw, 0.92rem);
+  transition: color 0.3s;
+}
+.idx-retos-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.idx-retos-arrow { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.idx-retos:hover { color: var(--ink); }
+.idx-retos:hover .idx-retos-arrow { transform: translateX(6px); color: var(--accent); }
 .idx-row {
   display: block;
   padding: clamp(1.5rem, 3vw, 2.2rem) 0;
@@ -1219,7 +1258,7 @@ a {
   top: 0;
   left: 0;
   width: 340px;
-  height: 230px;
+  aspect-ratio: 16 / 9;
   pointer-events: none;
   z-index: 40;
   opacity: 0;
@@ -1250,7 +1289,7 @@ a {
     display: block;
     position: relative;
     width: 100%;
-    height: 11rem;
+    aspect-ratio: 16 / 9;
     margin-top: 1rem;
     overflow: hidden;
     border: 1px solid rgba(96, 165, 250, 0.2);
@@ -1260,7 +1299,8 @@ a {
 /* ── Página de archivo ──────────────────────────────────────── */
 .archive-hero {
   position: relative;
-  min-height: 60dvh;
+  min-height: 60vh;
+  min-height: 60svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1318,7 +1358,7 @@ a {
 .archive-card { display: block; }
 .archive-card-media {
   position: relative;
-  height: clamp(14rem, 40vw, 24rem);
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 1px solid rgba(96, 165, 250, 0.2);
 }
@@ -1441,6 +1481,139 @@ a {
 }
 .archive-cta-btn:hover { background: var(--accent); color: #0c1829; }
 
+/* ── Retos personales (archivo) ─────────────────────────────── */
+.retos {
+  max-width: 84rem;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.2rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
+  background: var(--bg);
+}
+.retos-head {
+  display: grid;
+  gap: 0.9rem;
+  padding-top: clamp(2rem, 5vw, 3.5rem);
+  border-top: 1px solid var(--line);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+@media (min-width: 900px) {
+  .retos-head {
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    column-gap: 4rem;
+  }
+  .retos-eyebrow { grid-column: 1 / -1; }
+}
+.retos-eyebrow {
+  font-family: var(--body);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0;
+}
+.retos-title {
+  font-size: clamp(2.2rem, 6vw, 4.6rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  color: var(--ink);
+  margin: 0;
+}
+.retos-intro {
+  font-family: var(--body);
+  color: var(--ink-dim);
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 30rem;
+}
+.retos-list {
+  display: grid;
+  gap: 1.5rem;
+}
+.reto-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  border: 1px solid var(--line);
+  background: rgba(96, 165, 250, 0.03);
+  transition: border-color 0.3s, background 0.3s;
+}
+.reto-card:hover {
+  border-color: var(--accent);
+  background: rgba(96, 165, 250, 0.06);
+}
+@media (min-width: 900px) {
+  .reto-card { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
+}
+.reto-card-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  align-self: center;
+  overflow: hidden;
+}
+.reto-card-img {
+  object-fit: cover;
+  filter: grayscale(0.85) brightness(0.8);
+  transition: filter 0.6s ease;
+  will-change: transform;
+}
+.reto-card:hover .reto-card-img { filter: grayscale(0) brightness(1); }
+@media (pointer: coarse) {
+  .reto-card-img { filter: grayscale(0.35) brightness(0.92); }
+}
+.reto-card-body {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.4rem, 3vw, 2.4rem);
+}
+.reto-card-meta {
+  font-family: var(--body);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.8rem;
+}
+.reto-card-title {
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0;
+  transition: color 0.3s;
+}
+.reto-card:hover .reto-card-title { color: var(--accent); }
+.reto-card-tagline {
+  font-family: var(--body);
+  color: var(--ink-dim);
+  font-size: 0.82rem;
+  margin: 0.5rem 0 0;
+}
+.reto-card-goal {
+  font-family: var(--body);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: rgba(240, 244, 255, 0.42);
+  margin: 0.55rem 0 0;
+  max-width: 34rem;
+}
+.reto-card-cta {
+  margin-top: auto;
+  padding-top: 1.4rem;
+  font-family: var(--body);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: inline-flex;
+  gap: 0.5rem;
+}
+.reto-card-cta span { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.reto-card:hover .reto-card-cta span { transform: translateX(6px); color: var(--accent); }
+
 /* ── Ficha de proyecto ──────────────────────────────────────── */
 .case-study { background: var(--bg); }
 .cs-hero {
@@ -1459,6 +1632,21 @@ a {
 }
 .cs-eyebrow a { color: var(--ink-faint); transition: color 0.25s; }
 .cs-eyebrow a:hover { color: var(--accent); }
+/* Máscaras de los títulos animados. Dejan hueco por arriba para las tildes de
+   las mayúsculas (Ó, É…), que con un interlineado tan apretado se cortaban.
+   El font-size es el del título para que los em cuadren; el margen negativo
+   compensa el relleno y, sin tildes, el diseño no se mueve. Con tilde
+   (`.con-tilde`) se quita el margen para que el acento no pise lo de arriba. */
+.cs-title-mask,
+.cs-next-title-mask {
+  overflow: hidden;
+  padding-top: 0.22em;
+  margin-top: -0.22em;
+}
+.cs-title-mask.con-tilde,
+.cs-next-title-mask.con-tilde { margin-top: -0.02em; }
+.cs-title-mask { font-size: clamp(2.6rem, 10vw, 9rem); }
+.cs-next-title-mask { font-size: clamp(2.2rem, 8vw, 6rem); }
 .cs-title {
   font-size: clamp(2.6rem, 10vw, 9rem);
   font-weight: 700;
@@ -1503,8 +1691,9 @@ a {
 }
 .cs-cover {
   position: relative;
-  height: clamp(16rem, 62vh, 40rem);
-  margin: 2rem clamp(1.2rem, 5vw, 3rem);
+  aspect-ratio: 16 / 9;
+  width: min(84rem, 100% - 2 * clamp(1.2rem, 5vw, 3rem));
+  margin: 2rem auto;
   overflow: hidden;
   border: 1px solid rgba(96, 165, 250, 0.2);
 }
@@ -1847,7 +2036,8 @@ a {
 /* ── Sobre mí ───────────────────────────────────────────────── */
 .ab-hero {
   position: relative;
-  min-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh;
   display: grid;
   grid-template-columns: 1fr;
   align-items: center;
@@ -2348,3 +2538,35 @@ a.ct-channel:hover { background: rgba(96, 165, 250, 0.07); }
 
 /* Compatibilidad con páginas antiguas */
 .paragraph-line { @apply text-nowrap overflow-hidden; }
+
+/* ── Táctil (iPhone, iPad): menos trabajo para el navegador al hacer scroll ──
+   En el móvil las fotos de los proyectos ya no se mueven, así que no necesitan
+   una capa propia en la tarjeta gráfica. Y el desenfoque del fondo de las
+   etiquetas («En producción»…) encima de fotos que se desplazan es de lo que
+   más le cuesta a Safari en iOS: se cambia por un fondo casi opaco, que a ese
+   tamaño se ve igual. */
+@media (max-width: 899px), (pointer: coarse) {
+  .sc-card-img,
+  .archive-card-img,
+  .reto-card-img,
+  .cs-cover img,
+  .cs-shot img {
+    will-change: auto;
+  }
+  .sc-card-status,
+  .archive-card-status {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(12, 24, 41, 0.88);
+  }
+}
+
+/* ── Capas preparadas desde la carga ──
+   Lo que se mueve nada más empezar a hacer scroll (el bloque del inicio, la
+   palabra de fondo, la rejilla y las filas de la marquesina) se prepara en la
+   tarjeta gráfica mientras está la pantalla de carga. Si no, Safari lo hacía
+   en el primer movimiento del dedo y ahí se notaba el tirón. */
+.hero-inner { will-change: transform, opacity; }
+.hero-bg-word,
+.hero-grid-bg,
+.mq-row { will-change: transform; }
